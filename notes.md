@@ -1,3 +1,4 @@
+
 #### 29/02/2024
 
 Curso de PHP e Behavior Driven Development: BDD com Behat
@@ -176,3 +177,161 @@ Aprendemos o que é uma User Story;
 Definimos uma funcionalidade utilizando User Story;
 Aprendemos a definir cenários de testes;
 Entendemos a importância de definir cenários de testes para nossas funcionalidades;
+
+#### 01/03/2024
+
+@02-Conhecendo o Behat
+
+@@01
+Gherkin
+
+[00:00] Boas-vindas de volta. Mais um capítulo desse treinamento de introdução ao BDD utilizando PHP. E antes de partirmos para código, escrevemos uma documentação bem interessante e se você reparar, eu estou utilizando um editor de código, que eu, Vinícius, utilizo para rascunho, mas caso você queira utilizar para programar também, sem problema. Mas eu gosto de usá-lo para rascunho e esse editor de código está me dando um highlight de sintaxe.
+[00:29] E se ele está me dando um highlight de sintaxe em algumas palavras que eu coloco, significa que talvez essas palavras tenham algum valor, tenham algum significado. E dando uma olhada, pesquisando, vemos que essa “linguagem” que estamos utilizando, esse formato de arquivo é chamado de Gherkin.
+
+[00:48] Esse formato de arquivo descreve exatamente como podemos criar um arquivo de funcionalidade, um arquivo que descreve uma funcionalidade.
+
+[01:05] Dando uma olhada no formato, o que temos é exatamente o que fizemos. Nós temos uma funcionalidade e cenários para testar essa funcionalidade. E o cenário tem algo para realizarmos e o resultado esperado, o quando e então. Só que esse cenário também pode ter uma pré-condição, para isso usamos a palavra "dado", "dado que".
+
+[01:28] Com isso conseguimos criar um arquivo que descreve a nossa funcionalidade, que documenta a nossa funcionalidade, só que eu estou escrevendo em português. E essa linguagem, esse formato de arquivo está me mostrando as palavras-chave em inglês.
+
+[01:45] E tudo que falamos até agora, tudo que descrevemos até agora foi que estamos criando esse arquivo com a intenção de aproximar a nossa equipe de desenvolvimento, a equipe técnica, da equipe de negócios, a equipe que realmente entende do processo todo e não da tecnologia. Então se eu começar a escrever isso em inglês para atender aquela sintaxe, eu vou criar uma barreira muito grande para determinadas pessoas.
+
+[02:12] Nem todo mundo sabe inglês na minha equipe, nem todo mundo conhece o idioma, então eu quero poder escrever em português.
+
+[02:19] E se pesquisarmos Gherkin em português, encontramos diversos artigos, diversas documentações e uma delas é de uma ferramenta em PHP, que vamos falar um pouco mais sobre ela, mas que nessa ferramenta entendemos que colocando esse termo "#language: pt" em cima, já informamos para qualquer programa, para qualquer arquivo que for processar esse nosso arquivo de funcionalidade que estamos utilizando o idioma português.
+
+[02:50] Então vamos fazer isso, vou colocar o #language: pt e pronto. Temos o que seria para nós desenvolvedores um comentário, mas para a equipe que é de negócios, eles vão ler isso, vão ignorar e continuar lendo tudo que está em português, tudo que eles conseguem ler de forma clara.
+
+[03:08] Então com isso, com uma linha já informamos: “Olha, estou escrevendo isso em português e eu utilizo a nossa sintaxe do gherkin”.
+
+[03:19] Dando mais uma olhada, repara que estamos seguindo exatamente o processo que é recomendado para construir esse modelo de domínio, como é chamado nessa página e eu vou deixar esse link na atividade "Para saber mais", para você ler com mais detalhes, mas basicamente o que temos é a documentação da funcionalidade. E nessa documentação da funcionalidade, olha como a descrição já foi feita em um outro modelo. Lembra que eu comentei que as users stories são feitas com formatos diferentes?
+
+[03:48] Primeiro ele descreveu o propósito da funcionalidade, depois quem vai utilizar a funcionalidade e depois a funcionalidade em si. No nosso caso eu descrevi em uma ordem diferente. Primeiro o usuário, depois o propósito e depois a funcionalidade. Então existem vários formatos para descrever uma user story, como eu comentei e provavelmente você já pesquisou mais sobre, entre um vídeo e outro, mas basicamente descrevemos a nossa funcionalidade.
+
+[04:14] E além de descrever, exatamente como fizemos, podemos criar algumas regras. Essas regras, mais uma vez, não precisam estar nesse formato de hífen antes, você pode escrever como quiser, porque essa parte é literalmente uma descrição, é para nós seres humanos lermos, é para batermos o olho e sabermos o que está acontecendo. Então entendendo o que está acontecendo, podemos criar os cenários de teste.
+
+[04:41] Com os cenários de teste, com os cenários do que precisamos realizar, conseguimos definir pré-condições, conseguimos definir as ações e conseguimos definir o resultado esperado. E um detalhe que não implementamos ainda, é que podemos ter mais de uma pré-condição.
+
+[05:00] Então por exemplo, dado que estou conectado ao banco de dados e esse banco de dados está em memória. Eu posso ter diversas pré-condições utilizando a palavra E. Também posso realizar mais de uma ação, quando tento criar uma formação válida e sua descrição é “PHP para web”. Eu tenho uma ação em duas etapas.
+
+[05:28] Eu posso ter mais de um resultado esperado. Se eu buscar no banco devo encontrar essa formação e sua descrição deve estar correta. Eu posso definir mais etapas no meu processo, no meu cenário, então basta eu informar. Então eu espero algo e algo. É bem simples, é bem intuitivo esse formato. Então você pode dar uma lida em todo esse documento, que inclusive ele mostra como instalar a ferramenta que vai automatizar a leitura disso. É exatamente sobre essa ferramenta que vamos começar a conversar, vamos começar a dar uma olhada no próximo vídeo.
+
+@@02
+Para saber mais: Sintaxe de features
+
+Vimos neste vídeo que a sintaxe que utilizamos tem um nome, e se chama Gherkin.
+Essa sintaxe é bastante simples para tanto pessoas técnicas (da equipe de desenvolvimento) quanto pessoas não técnicas conseguirem entender e garantir que a funcionalidade está bem descrita.
+
+Existem muito mais detalhes dessa sintaxe, e se você quiser se aprofundar, pode conferir nesse link aqui.
+
+https://cucumber.io/docs/gherkin/
+
+@@03
+Behat
+
+[00:00] Vamos começar a conversar sobre essa ferramenta chamada Behat. Antes de qualquer coisa, o que é o Behat? O Behat é uma ferramenta para testar de forma automática, obviamente, as suas expectativas do negócio. Essa é a descrição que ele coloca para nós.
+[00:18] O que isso quer dizer? Significa que o Behat é uma ferramenta para automatizar isso que escrevemos anteriormente. Basicamente isso. O Behat vai ler esse arquivo, parcear e nos ajudar a automatizar os testes. Quer dizer que o Behat vai ler uma frase do documento e saber exatamente o que executar? Obviamente não. Mas ele vai nos dar uma boa ajuda para criar testes automatizados.
+
+[00:43] No último vídeo eu mostrei para vocês uma documentação em português acessível neste link, só que se você der uma olhada, essa é uma tradução não-oficial, inclusive eu deixo o meu obrigado por essa tradução, para o Diego Santos. E quem tiver o interesse de ajudar, contribuir, isso é um projeto de código aberto, você pode tentar atualizar essa tradução. Mas como ele mesmo diz, essa tradução pode estar desatualizada, então eu vou seguir a documentação oficial do Behat, então dando uma olhada na documentação, chegamos na parte de instalação.
+
+[01:13] Já conversamos um pouco sobre o arquivo, sobre o gherkin, sobre esse formato e já temos alguns cenários mais ou menos montados. Vamos modificá-los um pouco ainda, mas basicamente já temos quase tudo pronto. Então vamos começar a dar uma olhada na ferramenta em si, no Behat, que pode nos ajudar a configurar, a automatizar esses testes.
+
+[01:38] Então antes de qualquer coisa vamos instalar o Behat, então eu vou copiar o comando require --dev behat/behat e no meu terminal, pode ser através do PhpStorm, do VS Code ou no terminal direto, vamos digitar composer require --dev behat/behat e instalar. Ele vai demorar um tempo, porque minha conexão não é das melhores, mas basicamente, depois que você instalar o Behat e ele estiver instalado, vamos começar a realizar algumas configurações.
+
+[02:11] Primeiro, ele já vai dizer que você vai salvar aqueles arquivos de feature, aqueles arquivos de funcionalidade dentro de uma pasta features. Só que o Behat já cria algumas coisas para nós, então depois de instalado, vamos executar esse comando vendor/bin/behat --init. Só que eu vou pausar agora e vou voltar no próximo vídeo para executarmos essas configurações.
+
+[02:31] Recapitulando, o que é o Behat? É uma ferramenta para automatizar testes de comportamento, ou seja, testes do nosso negócio. E esses testes podem ser totalmente relacionados ao negócio, podem ser relacionados à tecnologia que estamos utilizando, pode ser direto no navegador, podemos escrever o cenário que quisermos e vamos configurar o Behat para entender o que queremos que ele teste.
+
+[02:59] Então o que vamos fazer neste capítulo no próximo vídeo é configurar o Behat, inicializá-lo para no próximo capítulo realizarmos alguns testes na prática. Então eu vou deixar instalando e no próximo vídeo eu volto com ele instalado para realizar essa configuração.
+
+https://docbehat.readthedocs.io/pt/v3.1/
+
+@@04
+Propósito da ferramenta
+
+Antes de colocarmos a mão na massa é importante garantirmos que todos os conceitos até aqui estão claros.
+Qual o propósito Behat, segundo o que foi explicado no vídeo?
+
+Automatizar testes de ponta a ponta (UI)
+ 
+Alternativa errada! Nem só de testes de UI vivem testers. Brincadeiras a parte, o Behat pode ser utilizado para automatizar qualquer tipo de teste, não só de UI.
+Alternativa correta
+Automatizar testes de integração
+ 
+Alternativa errada! Nem só de testes de integração vivem testers. Brincadeiras a parte, o Behat pode ser utilizado para automatizar qualquer tipo de teste, não só de integração.
+Alternativa correta
+Automatizar testes escritos utilizando Gherkin
+ 
+Alternativa correta! Basicamente, Behat automatiza os cenários que nós definirmos utilizando a sintaxe Gherkin.
+
+@@05
+Inicializando as configurações
+
+[00:00] Agora que eu já estou com o Behat instalado, podemos começar a brincar com ele, a ver o que ele fornece para nós. Só que no último vídeo eu me esqueci da parte mais importante, que é levar esse arquivo para o nosso projeto. Então eu vou copiar e no nosso projeto eu vou criar aquela pasta que o Behat já disse na documentação que é chamada de features.
+[00:22] E aqui eu posso criar o arquivo com o nome que eu quiser, eu vou chamar de “formacoes.feature”. Eu poderia chamar de “criar-formacoes.feature”, vou chamar assim, acho que vai ficar melhor. Então eu tenho o nosso arquivo “criar-formacoes.feature” e quando eu colo.
+
+[00:43] Repara que o PhpStorm, além de já reconhecer, colocar o ícone do gherkin, ele também reconhece as palavras, igual o Visual Studio Code estava fazendo. Então agora que já temos o arquivo, a pasta features e o nosso arquivo de feature configurado, vamos executar o comando para inicializar o Behat.
+
+[01:01] Então vamos no terminal, eu já estou com o Behat instalado, então vendor/bin/behat --init. E olha só o que ele vai nos mostrar.
+
+[01:10] Ele diz que criou a pasta bootstrap, onde vamos adicionar os nossos contextos, vamos falar mais sobre contextos um pouco mais para frente e ele também diz que já criou um contexto padrão para nós, o FeatureContext.
+
+[01:25] Então eu vou minimizar isso e dar uma olhada na pasta. Mas antes, se você reparar que tem uma cor diferente, o PhpStorm já está me dizendo que o Behat não saberia executar esse teste, ele não sabe o que fazer quando eu tenho essas etapas para executar, então é interessante ver que o PhpStorm já se integra diretamente com o Behat por padrão.
+
+[01:49] Bom, continuando. Em bootstrap eu tenho uma classe nova criada, que é um contexto, e de novo vamos falar mais sobre contextos, mas basicamente isso é o que vai ser executado quando rodarmos um teste.
+
+[02:02] E como está dizendo nesse comentário, para cada um dos nossos cenários, uma nova instância desse contexto vai ser criada. Então temos um contexto criado, tem a nossa feature criada, o Behat teoricamente tem tudo que precisa para executar, mas se eu tentar executá-lo, se eu colocar vendor/bin/behat o que vai acontecer?
+
+[02:26] Ele vai nos mostrar que identificou a nossa funcionalidade e identifico o nosso cenário e nesse nosso primeiro cenário, em amarelo ele mostra que tem 2 snippets, duas partes de código que ele não sabe o que fazer. E no nosso segundo cenário tem 3 partes, 3 passos, 3 passos que ele não sabe o que executar, ele não sabe como executar na prática. Então temos dois cenários e 5 passos, só que desses 5, os 5 estão indefinidos. Então o que ele consegue fazer?
+
+[03:03] No nosso suite de testes padrão, para você que já fez os treinamentos de teste, sabe que conseguimos separar testes por suíte. Na nossa suíte padrão, que é a que estamos usando por enquanto, nós temos passos indefinidos, então o Behat pergunta para nós em qual contexto queremos gerar esses passos, esses pedaços de código. E por enquanto só temos um, então eu vou selecionar a opção 1, mas se você reparar no terminal o que eu teria que colar no nosso FeatureContext.
+
+[03:35] Então ele não coloca para nós, ele não cria. Uma das coisas que podemos fazer é dando uma olhada na documentação, no help.
+
+[03:43] Vemos que tem --append-snippets, ou seja, adiciona os snippets não definidos ainda lá no nosso contexto principal, no contexto que é o único que temos por enquanto. E além disso, existe a opção --dry-run, que só vai executar esse formatador, que no nosso caso vai adicionar o snippet lá, mas não vai tentar executar os testes, até porque, por enquanto não temos teste. Então vamos lá.
+
+[04:17] Executar o --dry-run e --append-snippets. Deu certo, agora vou selecionar a FeatureContext 1 e perfeito, temos os snippets criados, os passos, as etapas adicionadas. Então eu vou fechar para vocês o que aconteceu.
+
+[04:56] Para cada uma daquelas etapas, o Behat criou um método e cada um desses métodos vai literalmente ser executado quando ele chegar nessa etapa.
+
+[05:06] E olha só que o PhpStorm já identificou que o método existe, inclusive eu consigo dar um “Ctrl + Click” e ir para o método. Só que se você reparar que existem algumas coisas interessantes e vamos focar no sintaxe highlight do PhpStorm.
+
+[05:24] Nós temos tudo em preto, só uma string, nada além disso. Temos a palavra "quando", que é o que define que é uma etapa a seguir e temos a descrição dessa etapa. Só que o número "1" está azul, como se fosse um parâmetro. E o que está entre aspas também ficou como se fosse um parâmetro e isso vai ser recebido como um argumento.
+
+[05:46] Então repara que como argumento receberíamos o número 1. A mensagem de erro receberíamos aquela string. Então isso é bem interessante que baseado no que escrevermos, podemos utilizar na nossa classe de testes. Então vamos modificar só um pouco para as coisas ficarem um pouco mais claras e mais explícitas. Então Quando eu tentar criar uma formação com a descrição “PHP” Então eu vou ver a seguinte mensagem de erro.
+
+[06:18] Quando tento criar uma nova formação com a descrição “PHP na web”, que isso sim é uma descrição válida, Então se eu buscar no banco vou encontrar essa formação.
+
+[06:30] O que eu vou fazer? Eu vou no FeatureContext e apagar tudo que foi gerado automaticamente para nós, para o Behat gerar de novo e agora com a feature correta. Então eu vou executar mais uma vez aquele comando para fazer o --append-snippets, vai adicionar no FeatureContext e pronto, vou fechar.
+
+[06:48] E agora sim, quando eu tento criar uma formação com a descrição que eu receber por parâmetro, eu vou ter a seguinte mensagem de erro, a mensagem que eu recebi por parâmetro. Então nós temos a pré-condição do cenário, temos o passo a ser executado, temos tudo definido, só que obviamente falta uma parte, a implementação em si.
+
+[07:11] Ainda não temos nada para executar, não temos essa funcionalidade para executar, então nosso teste obviamente não vai passar. Se eu executar isso, ele nem vai saber o que fazer. Vou executar só o vendor/bin/behat e vamos ver a saída que ele nos entrega.
+
+[07:26] Olha só, nós temos 2 cenários pendentes para implementar, porque existe no FeatureContext essa PendingException. Ou seja, o Behat ainda não sabe o que fazer porque ainda não temos o código de produção. Então vamos lá, eu vou propor para você um desafio, eu quero que você implemente uma funcionalidade de criar uma formação.
+
+[07:50] Caso você já tenha feito o curso de MVC, você vai tirar de letra, mas caso não tenha feito ainda, dá uma olhada no nosso Controller na lateral esquerda, de persistência de curso. Então conseguimos criar um curso da mesma forma precisamos ser capazes de criar uma formação.
+
+[08:07] Vou encerrar esse vídeo por aqui, foi um vídeo um pouco mais denso, porque finalmente colocamos um pouco da prática, faz os exercícios desse capítulo e cria a persistência de uma formação e aí você pode criar a página na web com um formulário etc. Obviamente, eu vou te entregar essa funcionalidade pronta no próximo vídeo, mas eu deixo de desafio para você se aventurar um pouco e praticar.
+
+@@06
+Para saber mais: Desafio
+
+Para desenvolver a implementação do cadastro de formações você pode conferir todos os arquivos do cadastro de Cursos. Lá você vai entender como tudo é feito.
+Como nós vamos salvar formações, vamos precisar atualizar o banco de dados para ter uma tabela de formações. Após criar a entidade Formacao, você pode executar o seguinte comando para atualizar o banco de dados:
+
+php vendor/bin/doctrine orm:schema-tool:update -f
+
+@@07
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+@@08
+O que aprendemos?
+
+O que aprendemos nessa aula:
+Vimos que a sintaxe que utilizamos para definir funcionalidades e cenários se chama Gherkin;
+Aprendemos que o Behat automatiza testes escritos com Gherkin;
+Inicializamos as configurações para começar a automatizar testes com Behat;
+
