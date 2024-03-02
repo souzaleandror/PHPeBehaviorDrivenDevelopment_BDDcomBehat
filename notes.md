@@ -543,3 +543,151 @@ O que aprendemos nessa aula:
 Aprendemos a efetivamente testar utilizando Behat;
 Vimos que cada etapa do teste executa um método de uma classe de contexto do behat;
 Conhecemos a função assert do PHP;
+
+#### 02/03/2024
+
+@04-Mais contextos
+
+@@01
+Projeto da aula anterior
+
+Caso queira, você pode baixar aqui o projeto do curso no ponto em que paramos na aula anterior.
+
+https://caelum-online-public.s3.amazonaws.com/1831-php-bdd/03/php-bdd-projeto-aula3-completo.zip
+
+@@02
+Contextos diferentes
+
+[00:00] Boas-vindas de volta a mais um capítulo desse treinamento de introdução a BDD utilizando PHP. E ainda nem chegamos na parte do BDD, explicando o que é, mas vamos chegar lá. Por enquanto eu quero dar uma organizada na nossa casa.
+[00:15] Porque olha só, essa classe está complexa de ler, pelo menos para mim, até porque, como eu estou com a fonte bem grande para vocês conseguirem enxergar, eu estou me perdendo, eu não sei mais o que faz parte de cada teste etc. Então o que vamos fazer agora? Vamos começar a organizar um pouco. Existem algumas formas de organizar o seu projeto de testes com Behat e vamos começar a ver algumas delas.
+
+[00:39] Primeiro eu quero separar os contextos de formação em memória e formação em SQL, porque temos claramente aqui um cenário onde estamos executando em memória, o Cadastro de formação com 1 palavra e um cenário onde estamos executando em SQL, o Cadastro de formação válida deve salvar no banco. Em um banco, com persistência, como você quiser chamar. Então eu vou criar classes separadas, classes diferentes. Então vamos lá! Eu vou criar uma nova classe.
+
+[01:06] Repare que o Behat já configura essa pasta bootstrap como autoload sem nenhum namespace. É que utilizando uma PSR um pouco mais antiga, que é a PSR 0. Então podemos simplesmente criar uma classe sem namespace e eu vou chamá-la “FormacaoEmMemoria”.
+
+[01:30] Todo contexto do Behat precisa implementar alguma interface de contexto, existem algumas, mas eu vou implementar \Behat\Behat\Context\Context que é a mais simples. Eu vou importar. Implementado esse contexto, eu consigo trazer aqueles métodos para cá, então eu vou trazer os métodos que realizam as verificações em memória. Vou trazer o @When, ou seja, Quando eu tentar criar uma formação e vou trazer o @Then, que por enquanto eu só tenho o eu vou ver a seguinte mensagem de erro :arg1.
+
+[02:02] Então quando eu tento criar uma formação, vou importar a formação, eu vejo essa mensagem de erro. Só que eu não defini a mensagem de erro, então eu vou adicionar essa propriedade, que vai ser uma string, então private string $mensagemDeErro;. A princípio, tudo certo. O nosso contexto está pronto, já removi e agora esse contexto que se chamava FeatureContext só possui os detalhes de banco.
+
+[02:29] Estou conectado no banco de dados, realizo a inserção no banco e verifico o banco de dados. Então separamos um pouco melhor. Vamos renomear para “FormacaoNoBanco”, acho que é um banco interessante. Vou salvar.
+
+[02:45] Eu posso inclusive remover esse construtor que não estamos utilizando, posso remover essa mensagem de erro que não está sendo utilizada e agora eu tenho um pouco mais de organização. Então vamos executar os nossos testes para ver o que acontece. Então php vendor/bin/behat e quando eu executo.
+
+[03:08] Apareceu um erro dizendo que não existe uma classe chamada FeatureContext. E o que isso quer dizer? Que estragamos a infraestrutura do Behat, acabamos com tudo que ele sabia. Porque o Behat parte do princípio que nessa pasta “bootstrap” vai ter uma classe chamada FeatureContext e para o informarmos que estamos utilizando classes diferentes, vamos precisar criar um arquivo bem simples chamado behat.yml.
+
+[03:39] Então dentro dele vamos dizer que no perfil padrão, ou seja, default, vamos ter as suítes de testes e temos a suíte padrão também, a default e dentro dessa suíte padrão vamos definir quais são os contextos. E por enquanto temos os contextos FormacaoEmMemoria e FormacaoNoBanco. Temos esses dois contextos, vamos tentar executar de novo.
+
+[04:07] E agora sim temos os nossos testes passando. E com isso ganhamos flexibilidade porque podemos criar novos cenários para o nosso contexto em memória, mas perdemos um pouco em agilidade. Quando quisermos criar um novo contexto, por exemplo, quando quisermos criar novos cenários que não façam parte de formação, vamos ter que ir no arquivo de configuração e definir esse novo contexto. Mas acho que é um trade off interessante, ganhamos mais do que perdemos.
+
+[04:39] Então para vermos uma coisa interessante. Bom, primeiro quero mostrar que o PhpStorm já nos dá de brinde, ele identifica em qual dos dois contextos isso está. Em eu vou ver a seguinte mensagem de erro “Descrição precisa ter pelo menos 2 palavras” ele já identifica informação em memória e em tento salvar uma nova formação com a descrição “PHP na web” ele já identifica informação no banco.
+
+[04:54] E vamos criar agora um novo cenário para verificação em memória. Verificamos o caso de erro em memória, vamos verificar o caso de sucesso em memória. Então criar um novo cenário com Criação de formação válida. No cenário que tínhamos eu vou trocar de Cadastro de formação com 1 palavras para Criação de formação com 1 palavra, que não estamos cadastrando, só estamos criando direto no código e não cadastrando no banco. Então Quando eu tentar criar uma formação com a descrição “PHP na web”.
+
+[05:27] Repare que utilizamos o mesmo método que Quando eu tentar criar uma formação com a descrição “PHP” e isso vai fazer com que o Behat reutilize esse método. Então isso é bem interessante, eu consigo criar vários cenários com o mesmo caso, executando a mesma ação passando parâmetros diferentes. Então Quando eu tentar criar uma formação com a descrição “PHP na web” Então eu devo ter uma formação criada com a descrição “PHP na web”.
+
+[06:00] E olha só que outra coisa que o PhpStorm faz de muito legal para nós, ele identificou que esse passo não existe, então teríamos que executar aquele comando do Behat ou pedir para ele atualizar ou ver o pedaço de código que ele pede para adicionar, copiar e colar, só que o PhpStorm já entrega de bandeja para nós com “Alt + Enter” e “Enter”. Ele vai criar para nós e eu posso definir em qual dos dois contextos FormacaoEmMemoria e FormacaoNoBanco. Vou criar no FormacaoEmMemoria e olha só.
+
+[06:29] Ele já entrega para nós o método criado com o argumento necessário e a anotação definida @When. Então antes de qualquer coisa vamos implementar, garantindo que eu tenha uma formação com a descrição correta. Para eu verificar a descrição, já sabemos que vamos precisar armazenar essa formação em algum lugar. Adicionada a propriedade, vou definir a descrição da formação e vou garantir assert que essa formação tenha descrição igual ao argumento passado por parâmetro.
+
+[07:02] E vou renomear o argumento com “Shift + F6” para descrição da formação, que vai ser uma string. Agora sim! Então eu tenho euDevoTerUmaFormaçãoCriadaComADescrição.
+
+[07:20] Então conseguimos ver que já, aparentemente está tudo certo e repara que mais uma vez, para 2 cenários diferentes estamos utilizando o mesmo caso de @When, o mesmo método. Então ganhamos nesse ponto, além de separar melhor as nossas classes, temos uma reutilização de código em certo nível. Então vamos de novo executar nossos testes. php vendor/bin/behat.
+
+[07:48] Temos os nossos testes passando. Só que eu sei que nem todo mundo utiliza PhpStorm, então como será que faríamos para pedir para o Behat automaticamente adicionar direto nesse arquivo correto, esse snippet de código, esse passo. E outra coisa, se você tiver reparado, o parâmetro para o @When está um pouco diferente do que vimos nos casos que foram gerados pelo Behat. Então vamos no próximo vídeo falar um pouco sobre essa geração de código pelo Behat.
+
+@@03
+Separação dos passos
+
+Começamos a organizar um pouco nosso código para separar os códigos relacionados à manipulação de formações no banco e em memória em classes diferentes, conhecidas pelo Behat como Contextos.
+Quais são as etapas para criar um novo contexto?
+
+Selecione uma alternativa
+
+Criar uma classe em features
+Fazer com que essa classe implemente alguma interface de contexto do Behat
+Adicionar esse novo contexto no arquivo behat.yml que fica na raiz do projeto
+ 
+Alternativa correta
+Criar uma classe em features/bootstrap
+Fazer com que essa classe implemente a interface de contexto do Behat
+Adicionar esse novo contexto no arquivo behat.yml que fica na raiz do projeto
+ 
+Alternativa correta! Se quiser se aprofundar mais, pode dar uma olhada em https://docs.behat.org/en/latest/user_guide/context.html#context-class-requirements
+Alternativa correta
+Criar uma classe em features/bootstrap
+Fazer com que essa classe estenda a classe de contexto do Behat
+Adicionar esse novo contexto no arquivo behat.yml que fica na raiz do projeto
+ 
+Alternativa errada! O behat fornece uma interface de contexto. Podemos implementá-la em nossas classes de contexto.
+
+@@04
+Gerando snippets
+
+[00:00] Como eu comentei no último vídeo, repara que o PhpStorm gerou o parâmetro que passamos para a anotação @When de forma diferente do que o Behat tinha feito. E vamos dar uma revisada, porque eu acho que eu passei muito rápido nessa parte, talvez tenha ficado óbvio, mas talvez não. Então vamos dar uma revisada.
+[00:24] Que o Behat, para ele saber quais métodos executar e quando executar, ele vai ler as anotações @When, @Then. Então sempre que eu tiver "quando" e o parâmetro que o Behat entende, ou seja, essa string, ele vai procurar algum método que tenha a anotação @When, que tenha como parâmetro dessa anotação um formato de string que se assemelhe a esse.
+
+[00:46] Então nesse caso, temos exatamente a string mais um argumento que começa com dois pontos. Já o PhpStorm criou para nós esse argumento utilizando uma expressão regular. “Vinícius, tem algum problema fazer dessa forma?” Problema nenhum, longe disso! Funciona exatamente igual, só que eu acredito, e isso é uma opinião pessoal, eu acredito que seja mais fácil ler a anotação no formato do Behat, sem os detalhes de expressão regular. Então eu acredito que seja mais legível.
+
+[01:21] Então como podemos fazer para gerar esse pedaço de código sem o PhpStorm? E outro detalhe que o PhpStorm faz é: ele cria os métodos com acentuação. Embora isso funcione no Php, não é a melhor prática, não é muito interessante. E principalmente no Windows, em alguns casos isso pode acabar dando problema. Então eu vou remover o método, só vou copiar o assert para não ter que reescrever isso tudo e vou remover esse método.
+
+[01:50] Repara que aqui o PhpStorm já me diz que tem um problema, só que eu não vou mais usar o PhpStorm para gerar esse código, eu vou executar o php vendor/bin/behat e vou adicionar aquele --append-snippets com o --dry-run. Só que eu ainda posso informar mais um parâmetro, que é para qual contexto eu estou criando esses parâmetros. Então eu vou dizer -- snippets-forFormacaoEmMemoria. Então com isso vamos ver se eu não dei bobeira.
+
+[02:27] Aparentemente eu fiz tudo certo. Ele pulou os cenários, ou seja, ele não rodou os testes, era o esperado, porque adicionamos aquele --dry-run e ele modificou o nosso arquivo FormacaoEmMemoria. Então eu vou sair e ver o nosso FormacaoEmMemoria.
+
+[02:48] Temos lá o euDevoTerUmaFormacaoCriadaComADescricao e dessa vez sem acentuação no método e com aquele formato que já conhecemos. Então vamos nessa, adicionei o assert, vou colocar o nome do parâmetro certo (string $descricaoFormacao) é uma string e vamos executar os testes para garantir que tudo continua funcionando e eu não fiz nenhuma besteira. php vendor/bin/behat.
+
+[03:16] Tudo continua passando e o nosso código continua funcionando, os nossos testes continuam passando.
+
+[03:22] Então vamos recapitular. Conseguimos separar contextos diferentes para executar nossos testes. Na prática, se você conhece o PhpUnit, por exemplo, é a mesma coisa que criar classes diferentes para testes. Só que na prática muda um pouco, porque eu posso ter o mesmo arquivo de feature sendo executado em contextos diferentes. Então, por exemplo, esses dois cenários, Criação de formação com 1 palavra e Criação de formação válida estão sendo executados no FormacaoEmMemoria, porque é aonde o Behat encontrou essas definições dos passos necessários.
+
+[03:57] Já o cenário Cadastro de formação válida deve salvar no banco o Behat só encontrou os passos necessários no contexto de FormacaoNoBanco. Então dessa forma conseguimos trabalhar, mesmo que seja em um arquivo só de feature com contextos diferentes. Agora imagina que eu quisesse rodar somente os testes que rodam em memória? Porque eu não tenho acesso ao banco de dados no momento ou eu não quero rodar no banco de dados, eu quero algo mais rápido. Como será que poderíamos filtrar as execuções?
+
+[04:26] De novo, se você conhece PhpUnit, você sabe que temos as suítes de testes para conseguir organizar. Então como será que podemos organizar essa parte no Behat?
+
+@@05
+Conhecendo as tags
+
+[00:00] O que vamos fazer agora é: além de ter a suíte padrão de testes, que executa tanto os testes, vamos dizer de unidade, os testes em memória, quanto os testes no banco que vamos chamar de testes de integração. Eu quero também criar suítes específicas para cada um desses.
+[00:21] Sabemos que tem a suíte default, então vamos copiar e colar embaixo e colar embaixo de novo. A segunda eu vou chamar de unidade: e a terceira de integração:. Só que na suíte de unidade eu só quero utilizar o contexto em memória e na suíte integração somente o contexto no banco.
+
+[00:50] Então com isso já temos 2 suítes. Então vamos tentar rodar os nossos testes de unidade. Vamos lá. php vendor/bin/behat para eu filtrar as suítes de teste, eu defino com s e vou chamar a suíte de unidade -s unidade. E repara o que vai acontecer.
+
+[01:08] O meu contexto de unidade, que no caso é FormacaoEmMemoria. Assim, todos os contextos que eu tenho definidos na minha suíte de unidade, que no caso é um só, ele não possui a definição para os cenários Cadastro de formação válida deve salvar no banco. Então como que o Behat vai saber o que fazer? Ele não sabe que não deveria executar.
+
+[01:28] Repare que um dos cenários não foi executado e o Behat me pergunta, “Onde você quer adicionar esse snippet?” Então eu vou falar para ele que eu não quero adicionar em lugar nenhum, porque, na verdade, o que eu quero é filtrar. Sempre que eu executar a suíte de unidade, eu só quero executar os cenários que estejam relacionados a testes de unidade, a testes em memória.
+
+[01:56] Então eu quero de algum jeito informar que o cenário Criação de formação válida é da suíte de unidade, o de Criação de formação com 1 palavra também, já o Cadastro de formação válida deve salvar no banco é da suíte de testes de integração. Então e preciso informar para o Behat alguma forma para filtrar esses cenários e explicar que quando eu rodar a suíte de unidade, ele só pode rodar os dois primeiros cenários, ele nem pode tentar rodar o terceiro porque não tem contexto configurado.
+
+[02:24] E podemos fazer isso através de tags. Por exemplo, eu posso adicionar filtros na minha suíte de unidades, esses filtros podem ser por tags ou por papéis. É muito mais comum filtro por tags e eu posso adicionar, por exemplo, a tag unidade. Eu poderia colocar qualquer coisa, mas vou dar o mesmo nome que a suíte, só para manter um padrão. Então vou fazer a mesma coisa em integração, onde eu adiciono um filtro, um filtro de tags vai ser pela tag integracao, que vai ser o mesmo nome da suíte.
+
+[02:58] Agora sempre que eu executar a suíte unidade. Ele não vai executar teste nenhum. Por quê? Porque não temos nenhum cenário definido para essa suíte, nenhum cenário definido com essa tag e para adicionar uma tag é muito simples, basta começar com arroba (@) e digitar o nome da tag. Então eu vou adicionar a tag @unidade nos cenários Criação de formação com 1 palavra e Criação de formação válida e vou adicionar a tag @integracao nesse outro cenário Cadastro de formação válida deve salvar no banco.
+
+[03:36] Agora quando eu executar a minha suíte de unidade, ele vai executar esses dois cenários. Se eu executar a minha suíte de integração, ele vai executar somente o terceiro cenário.
+
+[03:47] E repara que ele até demora um pouco mais para executar, porque precisa ir no banco de dados, então isso já é esperado. Então com isso já conseguimos uma organização bem maior dos nossos testes, dos nossos cenários, dos nossos contextos. O nosso arquivo já está começando a tomar uma cara, vamos dizer assim.
+
+[04:07] Só que como eu falei anteriormente, o propósito do Behat é testar funcionalidades do seu sistema, é algo mais amplo. Então essa ferramenta específica, o Behat, não é tão interessante para realizar esse tipo de teste.
+
+[04:23] Note que o nosso teste não está tão legível e tão amigável quanto ele ficava no PhpUnit. Você concorda comigo? Espero que você respondido se concorda ou não. Mas o ponto é, o Behat pode fazer algumas coisas a mais, além de simplesmente executar alguns métodos. Então no próximo capítulo vamos ver uma coisa bem interessante sobre o Behat, que é como que ele pode nos ajudar a controlar um navegador para executar testes nele.
+
+@@06
+Para saber mais: Organização
+
+Neste capítulo nós aprendemos a organizar um pouco os nossos códigos de testes.
+Embora a documentação do Behat não seja a melhor do mundo, existe um breve capítulo sobre a organização dos testes através de tags, então você pode usar como referência quando precisar se lembrar: https://docs.behat.org/en/latest/user_guide/organizing.html
+
+https://docs.behat.org/en/latest/user_guide/organizing.html
+
+@@07
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+@@08
+O que aprendemos?
+
+O que aprendemos nessa aula:
+Aprendemos na prática o que é um Contexto do Behat;
+Aprendemos a separar nossos testes em vários Contextos;
+Conhecemos o arquivo behat.yml;
+Vimos como organizar e filtrar nossos testes através de tags;
