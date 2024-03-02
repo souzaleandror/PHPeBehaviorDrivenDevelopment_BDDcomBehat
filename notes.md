@@ -335,3 +335,211 @@ Vimos que a sintaxe que utilizamos para definir funcionalidades e cenários se c
 Aprendemos que o Behat automatiza testes escritos com Gherkin;
 Inicializamos as configurações para começar a automatizar testes com Behat;
 
+#### 02/03/2024
+
+@03-Primeiro cenário
+
+@@01
+Projeto da aula anterior
+
+Caso queira, você pode baixar aqui o projeto do curso no ponto em que paramos na aula anterior.
+
+https://caelum-online-public.s3.amazonaws.com/1831-php-bdd/02/php-bdd-projeto-aula2-completo.zip
+
+@@02
+Conferindo a implementação
+
+[00:00] Boas-vindas de volta a mais um capítulo desse treinamento de introdução ao BDD utilizando PHP. E como eu falei, eu já deixei o arquivo para você baixar, com todas as implementações que eu fiz entre um vídeo e outro, mas eu vou dar uma passada rápida com elas, caso você já tenha feito e queira conferir se fez igual a mim ou pelo menos parecido.
+[00:22] Eu tenho dois controllers inicialmente, um é para simplesmente exibir o formulário de uma formação, então eu crio uma nova formação, que já vamos chegar nessa classe, defino o título como cadastrar a informação e depois eu exibo esse template, eu pego o HTML desse template e exibo. Segredo nenhum nesse controller, esse foi o mais simples de implementar, visto que já utilizamos o HTML Trait, então ele é praticamente igual ao controller de formulário de inserção de um curso.
+
+[00:55] Antes de qualquer coisa, eu criei as rotas de nova formação, salvar formação e lista de formações. Perfeito, temos as rotas.
+
+[01:04] O próximo controller foi da lista de formações, então supondo que eu já tenho algumas formações cadastradas, eu pego no meu controller o repositório de formações, o Doctrine já me entrega isso de mão beijada, não preciso criar nada e nesse repositório que eu estou buscando, eu consigo até realizar alguns filtros, está ordenado pela descrição, o título da página vai ser a listagem de formações e pronto.
+
+[01:31] Com as formações em mãos e o título, eu pego o nosso template, que está dentro da pasta formações, que é o template listar e exibo.
+
+[01:39] O de persistência que é o mais complexo, mas eu simplesmente copiei o código da persistência de curso. Em um projeto real faríamos uma refatoração para não duplicar código, mas como o código aqui em si não é o nosso foco, eu realmente copiei e colei na cara dura e só modifiquei de curso para formação. Tudo continua funcionando e caso o cadastro seja realizado com sucesso, somos redirecionados para a lista de formações.
+
+[02:05] A classe formação em si é uma entidade anotada com as anotações do Doctrine, caso você já tenha feito o curso de Doctrine, você sabe o que isso tudo significa e o nosso ID pode ser nulo, eu posso criar na hora uma formação, a descrição começa com um texto vazio e isso, como já vimos em treinamentos, tem formas melhores de fazer, mas eu não estou focando no código de produção em si para podermos avançar.
+
+[02:33] E quando eu for definir uma descrição, eu tenho a nossa regra que caso separando a nossa descrição por espaço, a contagem dessas palavras seja menor do que 2, então eu tenho o nosso erro de que a descrição precisa ter pelo menos 2 palavras. Então essa é uma regra de negócios que temos na formação como definimos no nosso arquivo de feature. Vou abri-lo.
+
+[02:59] No nosso arquivo de feature nós temos a regra de que a descrição precisa ter pelo menos 2 palavras. Continuando nossa formação é só isso e temos o formulário onde eu insiro uma formação, eu só defino a descrição dela e salvo, simples assim.
+
+[03:18] E a nossa página de listar, onde eu simplesmente exibo a descrição de todas as formações e deixei um botão para excluir, mas ainda não temos essa funcionalidade implementada. Além disso, só para deixar mais completo, eu coloquei um botão de formações, então eu defini as classes listar-cursos e listar-formacoes para estilizar e aí o nosso menu fica dessa forma.
+
+[03:43] Então temos a funcionalidade de formações, tenho a listagem, consigo adicionar uma nova formação. Se eu colocar um título inválido, o erro não está nada amigável, então repara que isso teríamos que tratar.
+
+[03:55] Mas eu estou recebendo o erro, como o esperado. Agora caso eu coloque PHP para Back end, ou seja, tenho mais de 2 palavras, quando eu salvar. Então aparentemente eu introduzi um bug, vamos lá corrigir esse bug. Persistência de formação.
+
+[04:29] No nosso setDescricao vamos ver o que está chegando para nós na nossa descrição. Vamos ver. “PHP para back end”. Quando eu faço o explode disso utilizando um espaço, vamos ver o que temos. Temos um array. Interessante, bem interessante.
+
+[04:53] Então eu inverti a ordem dos parâmetros e agora tudo deve funcionar. Atualizei.
+
+[05:03] Então introduzi um bug, mas agora corrigido ao vivo. O que acontece? Em um processo real também teríamos testes para isso, como vamos implementar e para debugar não faríamos var.dump, utilizaríamos ex.thebug como já tem treinamentos aqui também.
+
+[05:20] Mas como eu estou fazendo tudo correndo, só para chegarmos ao ponto desejado, está aí a funcionalidade implementada e agora sim funcionando e estamos prontos para escrever os testes para fazer com que os testes desses cenários possam realmente ser executados.
+
+[05:37] Porque por enquanto eles não estão sendo executados, eles estão pendentes de implementação. Então é isso que vamos fazer nesse capítulo que é implementar os testes para esses dois cenários.
+
+@@03
+Arrange
+
+[00:00] Baseado no nosso arquivo da descrição da feature, conseguimos verificar aquele cenário de erro, fomos no nosso projeto, tentamos criar uma nova formação com a descrição só PHP e viu o erro sendo exibido com a mensagem desejada. “A descrição precisa ter pelo menos 2 palavras”. Perfeito.
+[00:22] E voltando, vimos também que o nosso cenário de sucesso, onde tentamos criar uma nova formação com a descrição PHP na web funcionou. Então PHP na web está aqui, se eu buscar no banco eu encontro essa formação. Só que eu quero automatizar esses testes e, por enquanto, o que eu vou automatizar? Eu não vou automatizar a abertura do navegador, clicar no botão, preencher no campo, salvar. Não! Eu vou automatizar a verificação direto no código.
+
+[00:52] Então como já vimos em testes de unidade, por exemplo, podemos nos conectar com o banco de dados, tentar criar a formação e salvar e depois verifica se ela existe no banco. Podemos fazer exatamente isso. Então nesse vídeo vamos criar essa pré-condição, vamos criar esse passo onde temos uma conexão com o banco de dados. Então vamos nessa.
+
+[01:19] Nós temos várias formas de fazer, mas o que eu vou fazer? Como o foco é o conceito do BDD, que vamos entrar bem mais em detalhes e um pouco da ferramenta que é o Behat, eu não vou focar nas boas práticas dos testes que já aprendemos em testes anteriores. Então o que eu vou fazer? Eu vou pegar o nosso container de dependência $container = require __DIR__. ‘/../../config/dependencias.php’;.
+
+[01:55] Porque desse container eu consigo pegar um EntityManager. Por quê? Vou mostrar para vocês em “config > dependencias.php”.
+
+[02:08] Sempre que eu tentar pegar um EntityManagerInterface, ele me entrega o EntityManagerCreator, só que o que eu acabei de ver que eu não me lembrava? Eu já configurei isso um pouco melhor e tenho uma classe específica para isso, então não vou precisar dessa gambiarra. Melhor ainda.
+
+[02:25] Então ignora essa gambiarra que eu ia fazer, porque o projeto está um pouco mais organizado do que eu imaginei. Então já posso pegar o $entityManager e com isso, eu vou importar essa classe e já temos uma conexão com o banco de dados.
+
+[02:40] Então já temos o EntityManager, só que eu vou armazená-lo aqui. Vou criar uma propriedade na classe private EntityManagerInterface vou chamar de $em. “Alt + Enter” e “Enter” para o PhpStorm importar. Então temos um EntityManager e eu vou inicializa-lo $this->em. Então o que acontece?
+
+[03:10] Quando esse cenário for ser executado, o que o Behat vai fazer para nós? Ele vai dizer "Opa! Identifiquei um cenário!" Então vamos ver quais são os passos para executar esse cenário. Eu tenho uma pré-condição, dado que eu estou conectado ao banco de dados. Então quando ele ler essa instrução, ele vai no método queEstouConectadoAoBancoDeDados e vai executar esse código. E o que esse código faz? Esse código cria um EntityManager e armazena no EM, na propriedade EM, ou EntityManager, como você quiser chamar.
+
+[03:45] Então eu simplesmente estou criando uma conexão utilizando o EntityManager. E lembra que isso tem até no documentário vem por padrão. Para cada cenário nós temos uma instância. Então esse cenário Cadastro de formação válida deve salvar no banco vai ser todo executado com a mesma instância.
+
+[04:04] Então agora que eu inicializei o EntityManager, tanto a etapa Quando tento criar uma nova formação com a descrição “PHP na web” quanto a etapa Então se eu buscar no banco, devo encontrar essa formação vão ser executadas tendo acesso a esse EntityManager que acabamos de criar.
+
+[04:16] Então com isso definido, vamos para a próxima etapa, que é Quando tento criar uma nova formação com a descrição “PHP na web”. Então no próximo vídeo vamos implementar isso.
+
+@@04
+Método do passo
+
+Finalmente implementamos um passo do teste que foi definido no arquivo de feature.
+Como o Behat sabe qual método tem que executar para cada passo?
+
+Selecione uma alternativa
+
+Baseado na anotação logo acima do método
+ 
+Alternativa correta! Repare que os métodos possuem anotações como Given, When e Then. Essas anotações informam ao Behat que esses métodos devem ser executados quando um passo com uma descrição que bata com o parâmetro passado para essas anotações for encontrado. :-)
+Alternativa correta
+Baseado no nome do método
+ 
+Alternativa correta
+Baseado na ordem da definição dos métodos e dos passos no arquivo de feature
+
+@@05
+Act...
+
+[00:00] No último vídeo executamos aquela etapa, que nos treinamentos de teste aprendemos como arrange, ou seja, definimos a pré-condição para executar o teste, preparamos o teste. Agora está na hora de executar a ação. Mas antes, vou deixar um aviso, também aprendemos nos treinamentos de teste como realizar testes com banco de dados.
+[00:26] Então normalmente, o que eu teria seria uma nova conexão, por exemplo uma conexão com o banco de dados em memória, com um outro banco de dados específico para testes. No nosso caso eu vou utilizar o mesmo banco de dados só para termos alguma coisa lá, mas normalmente utilizaríamos um banco específico para testes.
+
+[00:47] Com isso sendo citado, vamos para a parte do "Quando", ou seja, a ação em si. Em consigo, como são cenários relativamente curtos, como são etapas relativamente curtas, eu vou implementar a “Quando” e a “Então”. Então vamos lá. Quando eu tentar criar uma nova formação com a descrição “PHP na web”, como eu executo essa etapa? Então public function tentoCriarUmaNovaFormacaoComADescricao(string $descicaoformacao).
+
+[01:15] Então o que eu vou fazer? Vou criar uma nova formação, a $formacao = new Formacao(); vou importar. Essa formação vai ter como descrição a descrição passada por parâmetro, então $formacao->setDescricao($descricaoFormacao);. Perfeito, só que eu ainda não a criei no banco de dados, eu não a salvei, então eu vou pegar do meu EntityManager, vou fazer um persist na formação e como nos lembramos bem, fazer um flush.
+
+[01:47] Então agora eu criei no banco de dados a minha formação. Perfeito, essa etapa foi concluída. Isso foi o nosso act, ou seja, a nossa ação do teste, que é criar uma formação no banco de dados, exatamente isso que fizemos. Só que como essa etapa foi bem rápida, vamos criar também essa etapa para o nosso primeiro cenário. É quando eu tento criar uma formação com a descrição PHP. E nesse caso, lembra que comentamos no início, quando ainda estávamos criando os cenários?
+
+[02:17] Esse cenário Cadastro da formação com 1 palavra não tem tanta relação com a tecnologia. Eu não quero saber se isso está indo para o banco de dados ou não, se está na web, eu só quero garantir que ao tentar criar uma formação com essa descrição, eu vou ter esse erro. Então pensando um pouco na implementação, eu posso dizer que quando eu tentar definir a descrição da formação, se o valor “PHP” for passado, então de cara eu vou receber o erro. Então nesse caso nem vamos precisar bater no banco de dados.
+
+[02:48] Então vamos lá. No nosso método euTentarCriarUmaFormacaoComADescricao e de novo vamos ter a descrição da formação. Então vamos ter $formacao = new Formacao(); com a $formacao->setDescricao($descricaoFormacao):.
+
+[03:10] Nós poderíamos, inclusive eu recomendo, definirmos nomes um pouco mais específicos. Então Quando eu tentar criar uma formação, perfeito, isso faz sentido. Agora no outro cenário, ao invés de Quando tento criar seria melhor Quando tento salvar uma nova formação acho que seria um pouco mais interessante. Então vamos modificar e aí você vai ver o processo de modificação de uma etapa. Então Quando tento salvar uma nova formação com a descrição “PHP na web, olha só o que acontece.
+
+[03:44] O Behat não sabe mais que passo é esse, que etapa é essa. Então vamos encontrar isso onde já implementamos. Olha só, Quando tento salvar uma nova formação.
+
+[03:56] Estão reparando? tento salvar uma nova formação ele já identificou. O nome do método não importa tanto, mas de qualquer forma vou alterar só para manter consistente.
+
+[04:06] O que importa mesmo é o parâmetro @When tento salvar uma nova formação com a descrição :org1 que é passado para a anotação @When. Então a partir essa string o Behat sabe que ele precisa executar o método public function tentoSalvarUmaNovaFormacaoComADescricao(string $descricaoFormacao); e encontrar algum passo com essa descrição. Com isso tendo ficado claro, já implementamos a parte do Act, ou seja, eu estou tentando criar uma formação com uma descrição inválida, que é o “PHP” e tentando salvar uma formação com uma descrição válida.
+
+[04:39] Temos os passos de execução do Act. Agora no próximo vídeo vamos criar esses dois asserts e aí entra uma peculiaridade, mas vamos conversar sobre isso no próximo vídeo.
+
+@@06
+Reescrevendo etapas
+
+Neste vídeo nós reescrevemos uma etapa do cenário para que ela fique mais descritiva.
+O que é necessário fazer após renomear uma etapa?
+
+Alterar o parâmetro da anotação do método referente a essa etapa
+ 
+Alternativa correta! O parâmetro da anotação é o que define qual método será executado, logo, precisamos alterá-lo.
+Alternativa correta
+Alterar o nome do método referente a essa etapa
+ 
+Alternativa errada! O nome do método não importa
+Alternativa correta
+Alterar o parâmetro da anotação e o nome do método referente a essa etapa
+ 
+Alternativa errada! O nome do método não importa
+
+@@07
+Assert
+
+[00:00] Agora vamos para a última parte, que seria a parte do assert desses dois cenários e nessa parte vamos ver algumas peculiaridades. Para começar, vamos para o cenário Cadastro de formação com 1 palavra primeiro que vai ser mais complexo.
+[00:15] Sempre que eu vou criar uma formação, eu preciso ver essa seguinte mensagem de erro. Só que o que acontece? Quando o Behat executar o método public function euTentarCriarUmaFormacaoComADescricao(string $descricaoFormacao):, uma exceção vai ser lançada.
+
+[00:25] Então o programa já vai parar, essa execução do teste já vai parar e nunca vai ser executado esse método. Então como o Behat é uma ferramenta para testar comportamentos, vamos ter que fazer uma "gambiarra" para conseguirmos testar esse comportamento. E depois que eu implementar, vou discutir com vocês sobre isso.
+
+[00:47] Criei a formação, vou fazer um try catch. Então vou fazer um try e pegar um \InvalidArgumentException.
+
+[00:56] E pegando essa exceção, eu vou armazenar a mensagem de erro, que vai ser $exception->getMessage. Então o que eu estou fazendo? Estou executando esse código. Caso esse lance uma exceção, eu estou pegando essa exceção e salvando a mensagem na propriedade mensagem de erro.
+
+[01:20] Inclusive eu vou inicializá-la com o string vazio. Agora, lá no meu assert $mensagemDeErro. Eu preciso garantir que return $MensagemDeErro === _$this->mensagemDeErro;. Só que essa simples comparação não vai fazer muita coisa, mas vamos lá, chegamos nessa próxima peculiaridade depois. Já temos uma parte implementada.
+
+[01:52] Agora eu preciso garantir que se eu buscar no banco, devo encontrar essa formação, então vamos buscar no banco para encontrar essa formação.
+
+[02:00] E como buscamos uma formação no banco? Pegando um repositório. $repositorio = $this->em->getRepository(Formacao::class);. Desse repositório eu quero buscar então $repositorio->findBy();.
+
+[02:24] E agora eu preciso buscar pelo quê? Então entra um outro detalhe, eu não consigo de forma simples, existem técnicas um pouco mais complexas, que não vamos entrar aqui, mas eu não consigo de forma simples pegar informações do método $formacao->setDescricao($descricaoFormacao);, por exemplo, não consigo saber o ID, eu não consigo ter acesso a essa mesma descrição.
+
+[02:47] Então uma possibilidade, seria da mesma forma que fizemos armazenando a mensagem de erro, armazenamos o ID da formação inserida. Então vamos lá! $this->idFormacaoInserida = $formacao->getId();. Então vamos criar isso, adicionar propriedade, isso deve ser o inteiro, caso seja qualquer coisa diferente de inteiro, deve dar erro. Nosso código deve falhar. Então eu posso buscar direto pelo ID. Um $this->idFormacaoInserida.
+
+[03:25] Então pego a formação, vou informar para o PhpStorm que isso é uma formação e agora eu posso realizar alguma verificação, garantir que essa formação existe, garantir que essa informação é uma instância de formação, ou seja, que eu consegui buscar a informação com esse ID.
+
+[03:44] Então temos aqui o passo a passo criado e vamos executar o teste para ver o que acontece. Se eu executar, olha só.
+
+[03:53] Nossos testes passaram, só que se por exemplo, eu buscar a formação 1, ainda vamos continuar com o teste passando, quer dizer, caso exista uma formação com o ID 1. Existe sim. Então temos os dados passando, mas um outro detalhe, caso eu chegue e não faça nenhuma verificação. Eu venho aqui e não tem nenhuma verificação.
+
+[04:26] Repara que meu Behat, meu teste, continua passando, então o que é a peculiaridade que eu estou tentando mostrar para vocês? O Behat é uma ferramenta para automatizar a execução de cenários, para testar, para realizar aqueles famosos asserts, ou seja, as verificações, precisamos de alguma biblioteca específica para realizar verificações.
+
+[05:00] A própria documentação do Behat explica que o Behat em si não vem com nenhuma ferramenta de verificação e você pode e deve utilizar alguma nesse momento. Podemos utilizar o PhpUnit, por exemplo. Temos também funções do próprio PHP, funções de asserções. Então podemos garantir que a formação é uma instância de formação, ou seja, que essa nossa variável é uma instância de formação. Também podemos garantir que a mensagem de erro é igual a mensagem de erro.
+
+[05:38] Essa função do PHP, que é uma função do próprio PHP, não é de nenhuma biblioteca externa, ela simplesmente verifica se algo é verdadeiro ou falso, se algo está correto. Então ele vai retornar falso em caso de erro e verdadeiro caso contrário. Só que isso continua não gerando o nosso resultado esperado. Eu vou executar o teste mais uma vez.
+
+[06:05] Testes passando. Agora se eu tentar verificar, por exemplo, que formação é uma instância de curso, o nosso teste deveria falhar.
+
+[06:15] Então, aparentemente, tudo funcionando. O que eu acreditei que ia acontecer? Que o assert não ia gerar nenhum erro nem nada do tipo. Só que o que o assert faz? E isso só recapitulando, não é do Behat, isso é uma função do próprio PHP. Quando um assert falha, ele gera um Warning e como ele gerou um Warning, o Behat sabe que falhou. Então eu vou fechar tudo e recapitular o que fizemos. Vamos lá!
+
+[06:41] Nós temos a definição dos cenários, então eu sei que quando eu tentar criar uma formação com a descrição PHP, ele vai executar o código $formacao = new Formacao(); então eu tenho que ver a seguinte mensagem de erro. Então estou garantindo que a mensagem de erro é correta. No nosso outro cenário, dado que eu estou conectado no banco de dados, ele executa $this->em = (new EntityManagerCreator())->getEntityManager();.
+
+[07:02] Quando tento salvar uma nova formação ele executa $formacao = new Formacao(); e se eu tento buscar no banco, devo encontrar, então ele executa /** @var \Doctrine\Persistence\ObjectRepository $repositorio.
+
+[07:13] E aí o que acontece? Como o Behat sabe se seu teste passou ou falhou? Baseado na saída do comando. Se o comando saiu com algum erro, significa que o seu teste falhou. Se o comando deu algum problema, como por exemplo, um Warning gerado, uma exceção foi lançada, um erro aconteceu, então isso significa que seu teste falhou.
+
+[07:33] Agora se nenhum problema acontecer, se não acontecer nenhum problema, nenhum warning gerado, nada do tipo, então ele vai identificar que seu teste passou, independente da verificação estar correta ou não. Por isso aquele nosso return não faria nada, ele não serve de nada.
+
+[07:51] Então precisamos ou fazer o que a documentação recomenda, utilizar o PhpUnit para fazer aquele assert ou podemos utilizar a própria ferramenta do PHP, a própria função que o PHP fornece para nós, é uma saída.
+
+[08:04] Vamos entender mais para frente em quais cenários é vantajoso utilizar o Behat, porque até agora nesses casos, você pode estar pensando que a simples utilização do PhpUnit para gerar esses testes é muito mais simples e a manutenção dos testes é muito mais fácil.
+
+[08:21] E eu vou concordar com você nesse ponto, só que o Behat tem um propósito um pouco mais específico e vamos falar desse propósito ainda. Só que antes disso vamos continuar praticando sobre Behat, organização, sobre o que é BDD, só que todos esses assuntos, todos esses bate-papos virão nos próximos capítulos.
+
+@@08
+Para saber mais: Assert
+
+Neste vídeo vimos uma particularidade interessante: Apesar de ser uma ferramenta de testes, o Behat não fornece nenhuma ferramenta para efetivamente verificar condições.
+Para isso nós poderíamos utilizar o PHPUnit por exemplo que traz inúmeros métodos interessantes de verificação, mas como já há cursos de PHPUnit na plataforma, utilizamos algo novo: A função assert do PHP.
+
+Essa função fornece um método muito simples que verifica se o parâmetro é verdadeiro, e caso contrário, emite um erro.
+
+Para saber mais sobre essa função você pode conferir a documentação oficial: https://www.php.net/assert
+
+@@09
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+@@10
+O que aprendemos?
+
+O que aprendemos nessa aula:
+Aprendemos a efetivamente testar utilizando Behat;
+Vimos que cada etapa do teste executa um método de uma classe de contexto do behat;
+Conhecemos a função assert do PHP;
