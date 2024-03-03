@@ -691,3 +691,214 @@ Aprendemos na prática o que é um Contexto do Behat;
 Aprendemos a separar nossos testes em vários Contextos;
 Conhecemos o arquivo behat.yml;
 Vimos como organizar e filtrar nossos testes através de tags;
+
+#### 03/03/2024
+
+@04-Automação do navegador
+
+@@01
+Projeto da aula anterior
+
+Caso queira, você pode baixar aqui o projeto do curso no ponto em que paramos na aula anterior.
+
+https://caelum-online-public.s3.amazonaws.com/1831-php-bdd/04/php-bdd-projeto-aula4-completo.zip
+
+@@02
+Instalando o Mink
+
+[00:00] Boas-vindas de volta a mais um capítulo desse treinamento de BDD utilizando PHP. Mas antes de falarmos de BDD realmente, quero bater mais um papo com vocês sobre a ferramenta Behat e algo que ela nos fornece, que são as extensões. Existem várias extensões para o Behat e uma das mais famosas é a MinkExtension.
+[00:21] A MinkExtension é uma extensão que pelo nome, vocês devem imaginar, faz a ligação entre o Mink e o Behat. Então é uma extensão para o Mink. Mas o que é esse tal de Mink? Dando uma olhada na documentação da MinkExtension, temos um link para essa ferramenta, que é o Mink.
+
+[00:41] E o Mink nada mais é do que uma ferramenta que emula ou controla um navegador para podermos acessar e testar aplicações web. Então isso é bem interessante. E o Mink faz isso através de drivers. O Mink fornece alguns drivers e eu vou comentar os mais famosos.
+
+[00:59] Esse primeiro e que é o mais utilizado, normalmente já vem instalado por padrão, é o que eu acredito que se pronuncie Goutte. Mas esse primeiro simula um navegador, só que somente fazendo requisições HTTP. Então ele não abre um navegador, abre uma janela, nada do tipo, ele só faz as requisições HTTP e interage com HTML, dessa forma ganhamos em performance.
+
+[01:24] O Selenium é uma ferramenta que controla navegadores realmente. Então abre uma janela do navegador, vai clicando e o Mink consegue se comunicar com o Selenium. Esse BrowserKit é uma ferramenta muito parecida com essa primeira, um pouco mais nova da Symfony, mas o propósito é o mesmo.
+
+[01:41] Esse ChromeDriver, o propósito é o mesmo do Selenium nesse caso, que é controlar o navegador real, só que a forma que ele faz é diferente, ele acessa o seu navegador mesmo instalado na sua máquina diretamente, já o Selenium precisa de um servidor rodando, então é um pouco diferente.
+
+[01:59] Mas na prática, quando rodamos na nossa máquina, só em uma máquina, o resultado é o mesmo, acontece a abertura de uma janela do navegador mesmo. Mas por enquanto vamos utilizar o Goutte. E para instalar a MinkExtension, precisamos ter o Behat instalado, e já temos, estamos o utilizando e ter o Mink instalado. Então para instalar o Mink, vamos utilizando o Composer e fazemos um require --dev behat/mink.
+
+[02:26] Para instalar a extensão, rodamos o comando require --dev behat/mink-extension e para instalar algum daqueles drivers, utilizamos o comando específico para cada driver, o pacote específico. Então composer require dev e o pacote de cada um dos drivers que você for utilizar.
+
+[02:41] Existem vários drivers e existe um problema na versão atual da MinkExtension, que eu já deixei resolvido para vocês no arquivo composer.json. Esse arquivo já tem as soluções, porque o que aconteceu? A versão atual da MinkExtension está com uma incompatibilidade com a versão atual do pacote Mink.
+
+[03:08] Então já aconteceu uma atualização do MinkExtension para corrigir esse problema, porque tem um problema de compatibilidade entre o Mink e a MinkExtension com alguns pacotes novos do Symfony que eles utilizam.
+
+[03:21] Esse problema já foi corrigido, então no composer.json eu só defini que estou utilizando as versões mais novas do Github diretamente. Então eu vou fornecer esse arquivo para vocês poderem instalar sem problema e quando você já estiver craque com o Behat e for utilizar isso nos seus projetos para realizar os testes, muito provavelmente essa correção já vai ter sido implementada na versão pronta do Mink e da MinkExtension, então você não vai precisar se preocupar com isso.
+
+[03:55] Mas eu também vou deixar um link de onde eu encontrei essa solução para que você entenda o que eu acabei fazendo nesse arquivo.
+
+[04:00] Bom, com isso definido, eu já tenho a MinkExtension, tudo isso instalado, o Mink, a MinkExtension e um driver, que é o driver que não vai abrir o navegador, então vamos ver como utilizamos, como fazemos na prática o uso da MinkExtension. Vamos lá! Primeiro passo é ativar a extensão no nosso behat.yml.
+
+[04:22] Então vou copiar esse arquivo e vou no meu behat.yml e além das nossas suítes, eu tenho também as minhas extensões configuradas. Por enquanto só uma que se chama Behat/MinkExtension, esse é o nome da extensão e tem alguns parâmetros que podemos passar para ela. Um dos parâmetros é a URL base. Ou seja, caso eu tente acessar "/login", vai ser "/login" de qual site? Então conseguimos informar aqui.
+
+[05:04] No nosso caso, como já sabemos é ‘http://localhost:8080’. Conseguimos definir mais de uma sessão, ou seja, eu posso ter uma sessão em que eu estou logado, uma outra sessão em que eu não esteja logado, esse tipo de coisa, mas eu vou utilizar uma só, vou utilizar a padrão e nessa sessão eu vou utilizar o driver que eu já comentei que não abre um navegador na prática.
+
+[05:26] Configurei a minha máquina, configurei a extensão, a habilitei, agora o que eu vou fazer? Eu preciso dizer para o Behat que quando eu executar algum teste, ele vai utilizar os contextos que essa extensão me dá. E essa extensão me dá alguns contextos, o primeiro, o que tem acesso a sessão do Mink diretamente, então você consegue acessar o Mink já configurado.
+
+[05:50] Essa segunda é bem mais interessante, porque além de te entregar o Mink, ou seja, o acesso a esses drivers de navegador, você já tem diversos passos definidos. Como temos os nossos passos, tenta criar uma formação, esse tipo de coisa, esses passos, nesse contexto já entrega vários passos definidos para nós.
+
+[06:12] Então podemos criar uma classe de contexto, ou aquela FeatureContext mesmo e estender essa classe que a extensão nos dá ou configurar diretamente no arquivo esse contexto que é exatamente o que eu vou fazer.
+
+[06:25] Então na nossa configuração eu vou criar uma nova suíte de testes. Já temos testes de unidade, temos teste de integração e eu vou criar uma nova suíte de testes e2e, ou seja, end to end, ou ponta a ponta. Um teste de ponta a ponta é aquele que faz o teste da sua aplicação como um todo, ou seja, o fluxo inteiro de uma funcionalidade de ponta a ponta.
+
+[06:51] Ou seja, acessando uma URL, fazendo login caso seja necessário, preenchendo campo no formulário, clicando no botão, interagindo com a aplicação como se fosse realmente um usuário.
+
+[07:02] Então nesse tipo de teste eu vou utilizar o contexto que a extensão do Mink me fornece. Eu, como já temos feito de praxe, vou adicionar um fitro e vou utilizar a tag chamada de e2e também. Então o que eu quero testar? Quero testar a funcionalidade de login.
+
+[07:22] Então dado que eu estou na página de login, ou seja, "/login", quando preencho o campo e-mail, que eu sei que o nome dele é e-mail, com vinicius@alura.com.br e preencho o campo senha, porque o nome dele é senha, com 123456 e pressiono “Fazer login” logo abaixo, então eu estou na URL /listarcursos.
+
+[07:54] Vamos ver se eu consigo criar esse arquivo somente dessa forma que eu descrevi. Então vamos criar essa feature e eu vou criar de forma mais resumida. login.feature. Eu não vou criá-la de forma completa, eu vou ter a #Language: pt de português, Funcionalidade: Login e a descrição da funcionalidade embaixo, que deveríamos preencher, mas aqui para ser mais breve eu vou deixar assim mesmo e eu vou ter um cenário, que é Realizar login.
+
+[08:26] Para realizar login, Dado eu estou em “/login” e repare que eu não estou colocando “Dado que eu estou”, isso é porque a tradução não é perfeita, então é assim que o Mink vai entender. Dado eu estou em “/login” Quando preencho “email” com vinicius@alura.com.br E preencho “senha” com “123456” E pressiono “Fazer login” Então devo estar em “/listarcursos”. Vamos dar uma olhada para ver se eu acertei.
+
+[09:15] E como eu sei se eu acertei? Primeiro, eu preciso dizer que esse cenário faz parte da suíte @e2e e eu vou tentar rodar a nossa suíte com php vendor/bin/behat -2 e2e e vamos ver se eu acertei.
+
+[09:31] E eu errei só o primeiro passo, não é Dado eu estou é Dado estou. Vamos ver se agora tudo funciona.
+
+[09:42] Vamos dar uma olhada, vemos um cenário falhando. O que aconteceu? Acho que eu encontrei o problema, ele provavelmente, como eu utilizo Docker, não está encontrando o nome localhost. Então eu vou tentar utilizando o IP local e vamos executar.
+
+[10:02] Agora sim, finalmente. Apesar de todos os problemas e complicações, conseguimos executar um teste que acessa a nossa página diretamente. Então repara que se eu mudar a URL, eu estou realizando todas as verificações.
+
+[10:18] Dado que eu estou na página "/login", quando eu preencho “email” com email válido, quando eu preencho “senha” com uma senha válida e pressiono “fazer login”, então eu devo estar nessa URL. Se eu errar a URL, se eu for redirecionado para uma URL diferente, o nosso teste vai falhar.
+
+[10:33] Então o teste falhou, perfeito. Então conseguimos ter um teste automatizado que acessa a nossa aplicação rodando, acessa o nosso servidor e realiza ações. Ele realmente acessa essa URL, ele preenche o campo “email” com o valor "vinicius@alura.com.br", ele preenche os campos, ele pressiona o link fazer login, o botão fazer login e aí ele verifica que está na URL especificada. Então isso tudo já é fornecido pelo Mink por padrão.
+
+[11:02] Veremos nos próximos vídeos o que mais conseguimos fazer utilizando Mink.
+
+@@03
+Para saber mais: Mink
+
+No momento da gravação do vídeo existia (espero que já tenham corrigido no momento em que você estiver assistindo) um bug por causa de versões de componentes necessários.
+Caso ao tentar instalar as ferramentas da forma sugerida pela documentação, você pode utilizar a mesma solução que eu.
+
+Substitua o conteúdo do seu arquivo composer.json pelo seguinte e depois execute o comando composer install:
+
+{
+  "autoload": {
+    "psr-4": {
+        "Alura\\Armazenamento\\": "src/"
+    }
+  },
+  "require": {
+    "psr/http-message": "^1.0",
+    "psr/http-server-handler": "^1.0",
+    "nyholm/psr7": "^1.1",
+    "nyholm/psr7-server": "^0.3.0",
+    "doctrine/orm": "^2.6",
+    "php-di/php-di": "^6.0"
+  },
+  "require-dev": {
+    "behat/behat": "dev-master as 3.6",
+    "behat/mink": "dev-symfony5 as 1.7.999",
+    "behat/mink-extension": "dev-patch-4",
+    "behat/mink-goutte-driver": "^1.2"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/japicoder/Behat"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/larzuk91/Symfony2Extension"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/ruudk/DoctrineDataFixturesExtension"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/DonCallisto/MinkExtension",
+      "comment": "Waiting for https://github.com/Behat/MinkExtension/pull/355"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/ruudk/MinkBrowserKitDriver"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/breizh81/Mink"
+    }
+  ]
+}COPIAR CÓDIGO
+Essa solução eu encontrei nesse link, caso você queira saber mais: https://github.com/Behat/Behat/pull/1256
+
+https://github.com/Behat/Behat/pull/1256
+
+@@04
+Conhecendo a API
+
+[00:00] E agora já entendemos que através do Behat, utilizando a MinkExtension, podemos até controlar o navegador. Nós utilizamos o driver do Goutte para não precisar abrir uma janela de navegador, até porque em um servidor normalmente não temos um navegador real instalado. E ele é bem simples, bem rápido, bem leve, mas você pode testar alguns outros drivers que estão na documentação caso queira.
+[00:32] Acho que vale citar que apesar dos nossos testes estarem passando hoje, php vendor/bin/behat -s e2e.
+
+[00:48] Então apesar de nossos testes estarem passando, caso eu venha na nossa view, na parte de login e modifique, por exemplo, um botão. Ao invés de fazer login eu o mudo para Logar, a partir de agora nossos testes não vão mais passar, porque ele não vai encontrar esse botão para clicar. Então repara como essa extensão funciona.
+
+[01:11] Quando eu digo que pressiono o “Fazer Login” ou que eu preencho a senha, ele vai procurar um elemento com ID, com nome, com título, com alguma outra propriedade chamada alt ou com o valor ou até mesmo com o texto que passamos por parâmetro com o valor dele, o texto mesmo, então ele procura um elemento onde um desses atributos seja o parâmetro que passamos e a partir disso ele age.
+
+[01:36] Então o campo senha é encontrado porque o nome dele, o atributo name é senha. Então dessa forma a extensão funciona e fornece diversas funcionalidades para nós.
+
+[01:48] Mas você provavelmente está se perguntando o que mais eu consigo fazer. E através de uma simples interface da linha de comando, conseguimos ver diversas possibilidades para implementarmos testes. Então utilizando Behat php vendo/bin/behat, eu posso passar o parâmetro -dl e informar a linguagem que é português, -dl --lang=pt e com isso ele vai me informar todos os passos possíveis que eu tenho acesso.
+
+[02:15] Então repara que temos os passos da test suit padrão, da test suit unidade, integração e da e2e. E repara que na de unidade e integração são os passos que nós criamos durante o treinamento e na e2e são os passos fornecidos pela MinkExtension.
+
+[02:35] Então você pode ver que dado ou dados, estou na página de entrada, estou em e a página informada, quando eu voltei uma página, avancei uma página, pressiono o botão, sigo o link, preencho, marco algo, desmarco, anexo o arquivo, então tem muita possibilidade para desenvolvermos infinitos testes dessa forma. Então a MinkExtension nos fornece um controle muito interessante sobre navegadores, sobre controladores de navegadores.
+
+[03:08] Mas caso você queria algo bem específico, que a MinkExtension não forneça para você, você obviamente pode fazer como fizemos nos nossos contexts. Você pode criar uma nova classe que estenda daquela Mink context, da classe Behat\MinkExtension\Context|MinkContext, você pode criar uma classe que a estenda e adicionar alguns passos caso você queira algumas coisas mais específicas. Não tem problema nenhum, não existe impedimento para você fazer isso.
+
+[03:35] Mas basicamente essas são as funcionalidades que a MinkExtension nos fornece, ela já nos entrega de mão beijada. Só que comentamos um pouco sobre testes end to end, então antes de entrar na parte de BDD mesmo e explicar o que é BDD, eu quero falar bem rápido no próximo vídeo com vocês sobre alternativas para executar testes end to end para saber se realmente Behat é a única opção ou se existem outras técnicas, outras ferramentas e outros conceitos no estudo de testes end to end.
+
+@@05
+Behat e Mink
+
+Vimos que o Behat se comunica de forma muito simples com o Mink (que controla navegadores) e a partir disso conseguimos realizar diversas ações e testes muito interessantes.
+Como o Behat sabe que código executar para cada etapa definida de nossos testes E2E?
+
+Os métodos referentes a cada etapa estão definidos na nossa classe de contexto E2E
+ 
+Alternativa errada! Nós não implementamos esses métodos.
+Alternativa correta
+Os métodos referentes a cada etapa estão definidos na classe MinkContext
+ 
+Alternativa correta! A classe MinkContext fornecida pela Mink Extension nos dá todas aquelas etapas já definidas como métodos que chamam funções do Mink. Não tem mágica nenhuma. ;-p
+Alternativa correta
+O Behat faz chamadas diretas ao sistema operacional, que por sua vez, controla o navegador
+ 
+Alternativa errada! O Behat sozinho não faz nada disso.
+
+@@06
+Alternativas
+
+[00:00] Vamos bater um papo bem rápido sobre testes end to end ou de ponta a ponta. Uma das ferramentas mais famosas, você provavelmente já ouviu falar, é a chamada Selenium. O Selenium é uma ferramenta que controla e automatiza navegadores, como ele próprio diz no site. Só que o Selenium fornece diversas ferramentas, existe o Selenium Grid, que é um servidor, onde você configura e pode ter um cluster de servidores que estão rodando o Google Chrome, por exemplo.
+[00:33] Ele consegue controlar mais de um navegador, por exemplo, Internet Explorer, Firefox. Então o Selenium é uma ferramenta bem robusta com um propósito específico de automatizar interação com navegadores. E existem diversas ferramentas em PHP que conseguem acessar grids em servidores do Selenium.
+
+[00:53] Então o Selenium é interessante, vale a pena dar uma lida e um dos principais componentes em PHP que fazem conexão com os navegadores e com o Selenium quando for necessário é o PHP-webdriver ou webdriver do PHP. Com essa biblioteca, com esse componente, que você pode dar uma lida na documentação, você consegue acessar um Grid Selenium, um servidor Selenium ou um navegador diretamente através de um webdriver.
+
+[01:22] E hoje em dia, tanto o Firefox quanto o Chrome, fornecem uma API para esses programas, para esses componentes conseguirem se comunicar diretamente. Então é bem interessante, vale a pena dar uma lida.
+
+[01:33] Além de controlar navegadores reais, como vimos com o Goutte, existe o Browser Kit. Como o nome já diz, é um kit de navegador, ou seja, uma ferramenta que simula o navegador de várias formas, permite que você acesse páginas, que você acesse conteúdos de sites e consiga interagir clicando, preenchendo formulários. A vantagem é que por não utilizar um navegador real, isso é muito mais rápido, ele realiza requisições HTTP e interage com o HTML sem precisar renderizar nada propriamente dito.
+
+[02:10] A desvantagem é que a interação com o JavaScript não acontece utilizando esse tipo de pacote, então caso você esteja interagindo com um site, testando, automatizando a interação com um site que não faça uso de JavaScript fortemente, como um site que seja feito com uma SPA, com Angular, React, alguma coisa do tipo, então o BrowserKit pode ser uma boa para você realizar testes end to end.
+
+[02:36] E para facilitar o acesso a tudo isso, existe o Panthor, que é uma ferramenta da Symfony também, que te permite utilizar Selenium, te permite utilizar diretamente o webdriver, o BrowserKit, permite que através de uma interface comum, você consiga utilizar diversas ferramentas para realizar esse tipo de trabalho.
+
+[02:57] De forma bem parecida com o que o Mink faz, só que o Panthor é um pouco mais desacoplado e é mais atual, repara que o último commit na data que eu estou gravando, foi há 4 dias, ou seja, ele tem um desenvolvimento um pouco mais ativo.
+
+[03:11] Então as chances de você esbarrar com um problema utilizando essa ferramenta é menor. Mas o propósito é bem semelhante ao do Mink, que utilizamos nesse treinamento. A vantagem do Mink é a integração já nativa com o Behat que é uma ferramenta bem interessante.
+
+[03:27] E agora que batemos um papo sobre as ferramentas possíveis para realizar testes end to end vamos finalmente para o próximo capítulo e falar um pouco do que é o título desse treinamento, do que é BDD.
+
+@@07
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+@@08
+O que aprendemos?
+
+O que aprendemos nessa aula:
+Aprendemos o que é um teste E2E;
+Conhecemos a ferramenta Mink e a Mink Extension;
+Instalamos e configuramos a Mink Extension em nosso projeto;
+Automatizamos testes que acessam nossa aplicação web;
