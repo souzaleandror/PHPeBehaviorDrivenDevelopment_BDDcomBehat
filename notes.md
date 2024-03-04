@@ -902,3 +902,147 @@ Aprendemos o que é um teste E2E;
 Conhecemos a ferramenta Mink e a Mink Extension;
 Instalamos e configuramos a Mink Extension em nosso projeto;
 Automatizamos testes que acessam nossa aplicação web;
+
+#### 04/03/2024
+
+@05-Testando antes
+
+@@01
+Projeto da aula anterior
+
+Caso queira, você pode baixar aqui o projeto do curso no ponto em que paramos na aula anterior.
+
+https://caelum-online-public.s3.amazonaws.com/1831-php-bdd/05/php-bdd-projeto-aula5-completo.zip
+
+@@02
+Testes Primeiro
+
+[00:00] Boas-vindas a esse que é o último capítulo do nosso treinamento de BDD com Behat e antes de falar de técnicas, ferramentas ou qualquer coisa, chegou a hora de implementar uma funcionalidade de excluir a formação.
+[00:14] Ela já está aqui no nosso template, já temos o botão, mas excluir que é bom, ainda não conseguimos. E da mesma forma como aprendemos nos cursos de testes que existe uma técnica chamada TDD, onde podemos antes de desenvolver a funcionalidade criar o teste para ela, vamos fazer agora, vamos utilizar do TDD. Criar primeiro o cenário de teste e depois vamos implementar.
+
+[00:38] Então eu vou criar um novo arquivo chamado excluir-formacoes.feature. Então eu tenho como language o português, tenho como funcionalidade excluir formações. Eu, como instrutor Quero poder excluir uma formação e Para poder organizar minha lista de formações. Porque eu estou com um monte de formações que eu criei para teste e não quero mais elas. Então o que eu vou fazer? Eu preciso criar um cenário de teste.
+
+[01:17] Então o cenário Excluir formação existente. Ou seja, nesse cenário eu sei que já existe uma formação cadastrada e eu vou apagar, qualquer uma. Então vamos nessa. Utilizando aquela sintaxe que o MinkExtension já nos fornece. Dado estou em “/login”. Vamos preparar o cenário mais completo. E preencho “email” com “vinicius@alura.com.br”, ou seja, esse vai ser um daqueles testes end to end. Eu vou criar todo o cenário, eu vou entrar na página, fazer login, depois que eu fizer login vou para a listagem de formações e lá na listagem vou clicar no botão excluir.
+
+[02:15] E preencho “senha” com “123456” embaixo E pressiono “Fazer Login” agora eu vou estar naquela página inicial e embaixo coloco E pressiono ou navego para, alguma coisa do tipo E pressiono para “Formações”. Existe também o navego para, sigo o link, mas eu não me lembro exatamente. Vamos dar uma olhada, não custa nada, php vendor/bin/behat vamos ver como é exatamente. --lang=pt.
+
+[02:53] Vamos testar algum outro, quero ver quando eu sigo o link. Sigo o link e o texto do link. Perfeito! Então é isso que eu quero. Embaixo de Eu pressiono coloco E sigo o link “Formações”. Então vamos lá. Dado que eu estou na tela de login e preencho email, senha, clico em “Fazer Login” e sigo o link “Formações”. Quando pressiono “Excluir” embaixo Então devo ver “Formação excluída com sucesso”.
+
+[03:33] Então aqui já temos um cenário de teste, esse cenário vai ser da nossa suíte de e2e, ou seja, teste de ponta a ponta e vamos executar para ver se eu não digitei nada errado, se eu não dei mole em algum comando. Então php vendor/bin/behat na suíte de testes e2e.
+
+[03:52] A princípio todos os cenários estão implementados, ótimo e um passo falhou. Vamos ver o que aconteceu, que esperamos que falhe mesmo.
+
+[04:01] Quando pressiono “Excluir”. Aparentemente ele não encontrou nenhum botão excluir, então o que acontece? O “Excluir” também está como um link, então eu vou dizer que eu sigo o link “Excluir”. Quando sigo o link “Excluir”. E vamos ver se agora o erro vai ser diferente. Vamos nessa.
+
+[04:27] Agora acho que temos um erro diferente. Perfeito! sigo o link “Excluir” então devo ver “Formação excluída com sucesso”. Só que dessa vez não recebemos nenhuma resposta, nenhum HTML, então temos um erro. Perfeito! O que fizemos? Criamos um cenário de teste, um cenário para verificarmos se uma funcionalidade está ok, só que essa funcionalidade não existe, então isso obviamente vai falhar.
+
+[04:52] Só que agora, caso nosso cenário esteja criado corretamente, quando eu implementar essa funcionalidade já vamos ver esse teste passando. Então vamos ter a segurança que implementamos corretamente. Então essa é a magia de criar o teste antes de criarmos uma funcionalidade. Então no próximo vídeo vamos colocar a mão na massa e criar a funcionalidade, vamos tentar fazer esse teste finalmente passar.
+
+@@03
+Fazendo passar
+
+[00:00] Vamos implementar juntos essa funcionalidade de excluir uma formação. Então já vou de cara criar essa nova rota em rotas.
+[00:13] Excluir formação vai mandar para um novo controller que ainda não possuímos. Então vamos lá. Já vou definir o nome dele que vai ser ExclusaoDeFormacao. PhpStorm já nos fornece para gente uma chance de criar essa classe.
+
+[00:34] E ótimo. Como eu sou cara de pau, vou pegar a implementação de exclusão de curso, que é bastante parecida e vamos nessa. Vou colocar em ExclusaoDeFormacao, vou importar isso tudo, só que ao invés de tentar pegar um curso, o que eu vou pegar? Vou pegar uma formação. Essa vai ser a diferença. E lembrando que se estamos copiando o código, significa que o código pode ser melhorado, mas eu não vou me preocupar com isso agora. Mas já fica para vocês saberem que algo de errado não está certo.
+
+[01:16] Vou refatorar para ficar do jeito do PHP7.4. Vou trocar a variável de curso para $formacao = $this->entityManager. Vamos criar essa formação com o ID passado por parâmetro, vamos remover a entidade, mandar essa informação para o banco de dados e adicionar a mensagem “Formação excluída com sucesso”.
+
+[01:43] Vamos ver se é isso que estamos esperando lá. Formação excluída com sucesso. Está certo. E vamos ser redirecionados para listar formações. Então a princípio nossa funcionalidade está implementada, vamos rodar o teste para ver se descobrimos se está tudo ok. Rodando o teste.
+
+[02:04] Os dois testes passaram. Então repara que eu nem abri meu navegador, mas eu tenho certeza de que estou conseguindo excluir uma formação. “Vinícius, esse teste está perfeito?” Poxa, longe disso, eu estou excluindo aqui qualquer formação, eu estou excluindo a primeira formação da lista, só que no meu cenário, o cenário que eu estou definindo, para mim faz sentido isso, porque eu estou partindo do princípio que já existe uma formação.
+
+[02:29] Só que em um cenário real e eu te convido a realizar esse desafio, você vai precisar realizar todos os passos de criar uma formação e só depois excluir essa formação específica. Então você provavelmente vai precisar seguir o link com a URL específica também.
+
+[02:48] Mas então agora entendemos o processo de que primeiro criamos um teste, vemos esse teste falhar, agora eu realizei a implementação e verifiquei que o nosso caso está passando. Se eu entrar no meu projeto, eu tenho certeza e eu vou fazer isso só para garantir que eu confio em mim mesmo.
+
+[03:07] Vou atualizar essa tela e excluir alguma formação. Eu garanto que isso vai funcionar. E está lá, “Formação excluída com sucesso”. Eu sei que funciona, porque o nosso teste já nos disse isso e eu automatizei esse processo. Então essa é a beleza de um teste de ponta a ponta. Eu garanto que independente do código estar ok, de estar tudo mais bonito, a aplicação em si está funcionando como eu espero.
+
+[03:30] Então mais uma vez implementamos um teste de ponta a ponta, só que esse não é o foco do treinamento, no próximo vídeo finalmente vamos bater um papo sobre BDD.
+
+@@04
+Behavior Driven Development
+
+[00:00] Boas-vindas ao final desse treinamento de BDD. E no último vídeo do treinamento finalmente vamos falar sobre o que é esse tal de BDD. E como eu sou muito cara de pau, eu venho direto trazendo para vocês uma página da Wikipedia para vocês saberem o que é BDD.
+[00:15] Então vamos falar um pouco sobre o que é BDD. Na prática BDD é um processo ágil, um processo de desenvolvimento ágil, que incentiva a comunicação e a colaboração entre desenvolvedores, pessoas não-técnicas de negócio, participantes como o cliente, até pessoas específicas de teste.
+
+[00:45] Então dessa forma, com essa comunicação mais próxima utilizando BDD, chegamos a definição do que precisa ser feito e a partir dessa definição feita, com todas as pessoas necessárias envolvidas, as pessoas de negócio, as pessoas que vão desenvolver, as pessoas que vão testar, com todos os envolvidos participando da decisão do que vai ser implementado e criando os cenários que serão verificados, aí sim partimos para realmente desenvolver aquela funcionalidade.
+
+[01:15] Isso é fortemente incentivado, fortemente baseado no TDD, que é o test-driven development que já conversamos em treinamentos anteriores e a lógica é basicamente a mesma. Só que ao invés de criar um teste de uma funcionalidade específica, o Behavior-driven development preza que você desenvolva o cenário de teste completo antes de desenvolver a feature e não prestando atenção a detalhes.
+
+[01:45] Então em excluir-formacoes.feature realizamos isso. Fizemos o login e clicamos em um botão. Clicando no botão sabíamos que tínhamos que ver uma mensagem de que a formação estava excluída com sucesso. E já deixo aqui um desafio, também não devo ver o nome da formação que você criou. Lembra que eu deixei um desafio para você criar a formação e depois excluir? Você tem que garantir que não a está vendo na tela também.
+
+[02:10] Enfim, é a definição em alto nível da funcionalidade para depois você realizar esse teste. Isso quer dizer que BDD e TDD são coisas que vão andar separadas? Não, muito pelo contrário. Os dois podem andar juntos e comumente andam juntos.
+
+[02:27] Se uma empresa tem a cultura de implementar o BDD, ou seja, se você recebe um arquivo parecido com criar-formacoes.feature, olha só, imagina se na sua empresa você recebesse um arquivo assim, ou você ajudasse a criar, obviamente, um arquivo desse tipo para saber o que vai desenvolver.
+
+[02:42] Olha que maravilha. Criando um arquivo desse tipo, sabendo o que você vai desenvolver, você tem muito mais incentivos para praticar o TDD também. Você vai pegar um cenário de teste e conforme vai implementando, você vai precisar de classes novas, funcionalidades novas e você vai aplicar TDD nesses menores cenários e depois no cenário mais amplo, o BDD já foi aplicado, porque você já tem um cenário pronto para ser testado.
+
+[03:08] Então a automatização de testes é onde o Behat, que é a ferramenta que utilizamos, entra. Só que o Behat não é uma ferramenta de BDD, é uma ferramenta de automação de processos. BDD é um princípio, é uma metodologia, vamos dizer assim, é um processo.
+
+[03:25] Você quer aplicar BDD e você vai aplicando BDD junto com a equipe. Você não roda um comando e diz, “Estou aplicando BDD”. Você não cria um arquivo .feature e faz o Behat rodar um navegador bonito clicando nos botões e diz que implementa BDD. Não. Você segue o BDD quando as funcionalidades necessárias para o sistema guiam o seu desenvolvimento.
+
+[03:49] Então essa é a lógica por trás do BDD. Então se você ver a página inicial de documentação do Behat.
+
+[04:02] Se você vir a logo do Behat, é basicamente o símbolo do TDD, que já vimos sobre ele, que tem aquele ciclo, aquele fluxo onde escrevemos o código, escrevemos o teste, depois faz o teste passar, refatora. Escreve o teste, faz o teste passar, refatora. Só que isso tudo com um novo ciclo, que esse teste, esse ciclo de TDD fica dentro de um outro ciclo de BDD, onde definimos uma funcionalidade, definimos o que queremos e aí vamos implementar.
+
+[04:33] Na implementação utilizamos TDD, até temos essa funcionalidade pronta, depois da funcionalidade pronta temos o teste passando, então podemos até refatorar mais, caso algo não tenha sido melhorado já utilizando o TDD. Então ambos se completam, ambos se complementam. BDD e TDD andam juntos e eu sei que essa sigla BDD, TDD, existe também DDD, existe um monte de coisa, fica até difícil de falar, mas o conceito por trás é basicamente o mesmo.
+
+[05:03] Antes de desenvolver algo, você precisa garantir que sabe o que está desenvolvendo e como testar aquilo que você está desenvolvendo. BDD é possível até mesmo sem automação. Você pode ter o arquivo criar-formacoes.feature ou um arquivo em um formato que você definir com a sua equipe e não automatizar esses testes, ter só uma equipe de testes manuais.
+
+[05:24] Isso vai ser muito caro, vai ser um processo muito mais trabalhoso, mas não deixa um processo de Behavior-driven development. Você vai ter o comportamento necessário antes de desenvolver. Só que a automação obviamente tem um papel enorme no BDD.
+
+[05:40] Durante esse treinamento, principalmente no início, onde quase não colocamos a mão em código, na prática vimos bastante o que é um BDD, que é descrever as funcionalidades, encontrar as regras que essas funcionalidades precisam seguir, encontrar cenários para testar essas funcionalidades e a partir desses cenários desenvolver e garantir que tudo está ok.
+
+[06:04] Então esse é o conceito por trás do BDD e isso é o Behavior-driven development.
+
+@@05
+Finalmente o BDD
+
+Levamos o curso todo falando sobre testes, ferramentas (como Behat e Mink) e implementando código, mas sobre BDD mesmo, só falamos nesse último vídeo, né!?
+O que, na prática, é o BDD?
+
+É descrever uma funcionalidade que automatiza um teste antes mesmo de desenvolver a funcionalidade
+ 
+Alternativa errada! Automatizar um teste não é BDD. Automação é só uma pequena parte.
+Alternativa correta
+É aplicar o TDD com testes E2E e testes de integração
+ 
+Alternativa correta
+É unir as equipes técnicas e não técnicas para definir os comportamentos necessários no software, e a partir dessas definições, desenvolver
+ 
+Alternativa correta! Essa pode ser uma definição simplória de BDD, e repare que testes nem faz parte dessa definição. Mas para garantir que o que você desenvolveu está de acordo com a funcionalidade descrita, nós testamos. Então esse treinamento focou bastante na parte de automatização dos testes e definição de funcionalidades, mas as boas práticas para testar você já viu em outros treinamentos aqui na Alura. ;-)
+
+@@06
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com os próximos cursos que tenham este como pré-requisito.
+
+@@07
+Projeto do curso
+
+Caso queira, você pode baixar aqui o projeto completo implementado neste curso.
+
+https://caelum-online-public.s3.amazonaws.com/1831-php-bdd/06/php-bdd-projeto-aula6-completo.zip
+
+@@08
+O que aprendemos?
+
+O que aprendemos nessa aula:
+Reforçamos a ideia do TDD ao criar um cenário de testes antes mesmo de implementar a funcionalidade;
+Entendemos, finalmente, o que realmente é BDD;
+Vimos que BDD é uma metodologia, e não o simples processo de automatizar testes.
+
+@@09
+Conclusão
+
+[00:00] Parabéns por terem chegado até o final desse treinamento. Esse treinamento onde entendemos um pouco sobre testes end to end, sobre testes em si e no final sobre o BDD (Behavior-driven development). Nesse treinamento vimos bastante coisa legal e começamos de forma bem simples descrevendo uma funcionalidade, depois de descrever encontramos regras e bolamos cenários para executar, para testar depois de pronta essa funcionalidade para garantir que está tudo ok.
+[00:29] E a partir desses cenários, vimos que utilizando uma ferramenta chamada Behat conseguiríamos criar testes e nesses testes criamos e depois, inclusive, separamos eles em contextos diferentes, onde temos formações em memória e formações no banco para separar os nossos contextos do que é um teste mais próximo ao teste de unidade, o que é um teste mais próximo a um teste de integração.
+
+[00:53] E vimos as dificuldades que testar com Behat nos entrega. Então vimos que o foco dele, o mais interessante do Behat e dessas ferramentas de BDD em geral de automatização de testes de funcionalidade são você poder executar testes end to end de forma muito simples.
+
+[01:12] Repara que esse cenário de teste poderia muito bem ser escrito por uma pessoa que não faz a menor ideia de como se programa uma aplicação. Eu posso muito facilmente criar esse cenário sendo uma pessoa de negócios, que não sabe programar. Então isso facilita muito a parte de comunicação do BDD e falamos que essa parte de comunicação é crucial para o BDD, que é muito mais importante que qualquer tecnologia que usemos.
+
+[01:37] As pessoas que cuidam do desenvolvimento precisam se comunicar com as pessoas que testam, com as pessoas do negócio, inclusive com o cliente. E essa comunicação leva a cenários mais assertivos para conseguirmos desenvolver uma nova funcionalidade que realmente agregue valor.
+
+[01:54] Então espero que você tenha gostado desse treinamento, espero que tenha tirado proveito. Caso tenha ficado alguma dúvida, não hesite, pode abrir uma dúvida no fórum. Eu sempre tento responder pessoalmente, mas quando eu não consigo, a nossa comunidade de alunos e de monitores é bem solícita e alguém vai com certeza te ajuda. Mais uma vez parabéns por ter chegado até aqui, obrigado por ter me aturado até o final e espero te ver em outros cursos aqui na Alura.
